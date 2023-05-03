@@ -10,7 +10,9 @@ import { ReactComponent as Save } from "../assets/icons/check-circle.svg";
 export default function EditInfo({ infoList, index ,toggleEdit , saveFn }) {
   let age = new Date().getFullYear() - new Date(infoList.dob).getFullYear();
   const [validated, setValidated] = useState(false);
+  const [err,setErr] = useState({})
   const gender = infoList.gender.toLowerCase();
+  
 
   const ageRef = useRef();
   const genderRef = useRef();
@@ -35,11 +37,25 @@ export default function EditInfo({ infoList, index ,toggleEdit , saveFn }) {
   const handleSubmit = (infoList) => {
     // const form = event.currentTarget;
     // console.log("form",form);
+    
+    const regex = /^[a-zA-Z ]*$/;
+    const validCountry = regex.test(countryRef.current.value) &&  countryRef.current.value.length>0
+    const validDescription = descriptionRef.current.value.length > 0 
+    
+    setErr({
+      country:!validCountry,
+      description:!validDescription
+
+    })
+
+
     console.log(ageRef.current.value)
     console.log(genderList[parseInt(genderRef.current.value) - 1])
-    console.log(countryRef.current.value)
-    console.log(descriptionRef.current.value);
-    saveFn(
+
+
+    if (validCountry && validDescription) {
+
+      saveFn(
         index,
         {
           "id": infoList.id,
@@ -53,8 +69,8 @@ export default function EditInfo({ infoList, index ,toggleEdit , saveFn }) {
           "country": countryRef.current.value,
           "description": descriptionRef.current.value
         }
-      
-    )
+        )
+      }
     
 
     
@@ -107,10 +123,11 @@ export default function EditInfo({ infoList, index ,toggleEdit , saveFn }) {
               placeholder="Country"
               defaultValue={infoList.country}
               ref= {countryRef}
+              isInvalid={err.country}
 
 
             />
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">No number in country or empty value</Form.Control.Feedback>
           </Form.Group>
           <Form.Group as={Col} md="12" controlId="validationCustom02">
             <Form.Label>Description</Form.Label>
@@ -121,9 +138,10 @@ export default function EditInfo({ infoList, index ,toggleEdit , saveFn }) {
               defaultValue={infoList.description}
               rows={7}
               ref= {descriptionRef}
-
+              isInvalid={err.description}
+          
             />
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">No empty value</Form.Control.Feedback>
           </Form.Group>
         </Row>
         <div className="d-flex flex-row-reverse bd-highlight">

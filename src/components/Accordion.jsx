@@ -30,12 +30,10 @@ function AccordionComponent({ list }) {
     inputList[index] = data
     setInputList([...inputList]);
     setEditState(false)
+    ToggleEditState()
 
     console.log("data Up",index,data)
   }
-
-
-
 
 
   if (inputList) {
